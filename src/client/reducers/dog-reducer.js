@@ -1,13 +1,14 @@
-import { MAKE_BARK } from '../actions/dog-actions';
+import {MAKE_BARK} from '../actions/dog-actions';
+import Immutable from 'immutable';
 
-const initialState = {
+const initialState = Immutable.Map({
     hasBarked: false,
-};
+});
 
 const dogReducer = (state = initialState, action) => {
     switch (action.type) {
         case MAKE_BARK:
-            return { hasBarked: action.payload };
+            return state.set('hasBarked', action.payload);
         default:
             return state;
     }
