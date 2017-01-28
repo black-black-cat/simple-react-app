@@ -1,5 +1,6 @@
 import gulp from 'gulp';
 import babel from 'gulp-babel';
+import mocha from 'gulp-mocha';
 import del from 'del';
 import glob from 'glob';
 import path from 'path';
@@ -12,22 +13,28 @@ const paths = {
     allSrcJs: 'src/**/*.js?(x)',
     serverSrcJs: 'src/server/**/*.js?(x)',
     sharedSrcJs: 'src/shared/**/*.js?(x)',
+    testJs: 'src/test/**/*.js',
     clientEntryPoint: 'src/client/app.js', // webpack 单入口
-    clientEntryPoints: getEntries(), // webpack 多入口
+    clientEntryPoints: getEntryPaths(), // webpack 多入口
     clientBundle: 'dist/client-bundle.js?(.map)',
     gulpFile: 'gulpfile.babel.js',
     webpackFile: 'webpack.config.babel.js',
     libDir: 'lib',
     distDir: 'dist',
+    testDir: 'src/test'
 };
 
-function getEntries() {
-    var arr = glob.sync('/**/main.js', {
+function getEntryPaths() {
+    return glob.sync('/**/main.js', {
         root: path.resolve('./src/client/pages'),
     });
-    var ret = {};
+}
+
+function getEntries() {
+    const arr = paths.clientEntryPoints;
+    const ret = {};
     arr.forEach(function (path) {
-        var key = path.replace(/^.*pages\/([a-zA-Z0-9_-]+)\/main\.js$/, '$1');
+        let key = path.replace(/^.*pages\/([a-zA-Z0-9_-]+)\/main\.js$/, '$1');
         if (key) {
             ret[key] = path;
         }
@@ -36,12 +43,13 @@ function getEntries() {
     return ret;
 }
 
-// getEntries();
+webpackConfig.entry = getEntries();
+console.log(webpackConfig);
 
 gulp.task('clean', () => {
     return del([
         paths.libDir,
-        paths.clientBundle,
+        paths.distDir
     ]);
 });
 
@@ -59,13 +67,18 @@ gulp.task('build', ['clean'], () => {
 // });
 
 gulp.task('main', ['clean'], () =>
-    gulp.src(paths.clientEntryPoint)
+    gulp.src(paths.clientEntryPoints)
         .pipe(webpack(webpackConfig))
         .pipe(gulp.dest(paths.distDir))
 );
 
 gulp.task('watch', () => {
     gulp.watch(paths.allSrcJs, ['main']);
+});
+
+gulp.task('test', () => {
+    gulp.src(paths.testJs)
+        .pipe(mocha())
 });
 
 gulp.task('default', ['watch', 'main']);
