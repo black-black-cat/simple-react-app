@@ -7,7 +7,10 @@ import path from 'path';
 // import { exec } from 'child_process';
 
 import webpack from 'webpack-stream';
+import { optimize } from 'webpack';
 import webpackConfig from './webpack.config.babel';
+
+import pkg from './package.json';
 
 const paths = {
     allSrcJs: 'src/**/*.js?(x)',
@@ -33,7 +36,7 @@ function getEntryPaths() {
 function getEntries() {
     const arr = paths.clientEntryPoints;
     const ret = {};
-    arr.forEach(function (path) {
+    arr.forEach(function(path) {
         let key = path.replace(/^.*pages\/([a-zA-Z0-9_-]+)\/main\.js$/, '$1');
         if (key) {
             ret[key] = path;
@@ -44,6 +47,12 @@ function getEntries() {
 }
 
 webpackConfig.entry = getEntries();
+webpackConfig.entry.vendor = Object.keys(pkg.dependencies);
+webpackConfig.plugins = [
+    new optimize.OccurrenceOrderPlugin(),
+    // new webpack.NoErrorsPlugin(),
+    new optimize.CommonsChunkPlugin({ name: 'vendor' }),
+];
 console.log(webpackConfig);
 
 gulp.task('clean', () => {
@@ -66,11 +75,11 @@ gulp.task('build', ['clean'], () => {
 //   });
 // });
 
-gulp.task('main', ['clean'], () =>
-    gulp.src(paths.clientEntryPoints)
+gulp.task('main', ['clean'], () => {
+    return gulp.src(paths.clientEntryPoints)
         .pipe(webpack(webpackConfig))
         .pipe(gulp.dest(paths.distDir))
-);
+});
 
 gulp.task('watch', () => {
     gulp.watch(paths.allSrcJs, ['main']);

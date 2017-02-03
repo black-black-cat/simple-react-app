@@ -7,13 +7,11 @@ export default {
     },
     devtool: '#eval',
     module: {
-        loaders: [
-            {
-                test: /\.jsx?$/,
-                loader: 'babel-loader',
-                exclude: [/node_modules/],
-            },
-        ],
+        loaders: [{
+            test: /\.jsx?$/,
+            loader: 'babel-loader',
+            exclude: [/node_modules/],
+        }, ],
     },
     resolve: {
         root: path.resolve(__dirname),
@@ -25,4 +23,9 @@ export default {
             reducers: path.resolve(__dirname, 'src/client/reducers'),
         }
     },
+    // plugins: [
+    //     new webpack.optimize.OccurrenceOrderPlugin(),
+    //     new webpack.NoErrorsPlugin(),
+    //     new webpack.optimize.CommonsChunkPlugin({name: 'vendor'}),
+    // ]
 };
