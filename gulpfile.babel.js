@@ -13,7 +13,9 @@ import webpackConfig from './webpack.config.babel';
 import pkg from './package.json';
 
 const paths = {
+    allSrc: 'src/**/*.{js,jsx,scss,sass}',
     allSrcJs: 'src/**/*.js?(x)',
+    allSrcStyles: 'src/**/*.?(s)css',
     serverSrcJs: 'src/server/**/*.js?(x)',
     sharedSrcJs: 'src/shared/**/*.js?(x)',
     testJs: 'src/test/**/*.js',
@@ -35,7 +37,9 @@ function getEntryPaths() {
 
 function getEntries() {
     const arr = paths.clientEntryPoints;
-    const ret = {};
+    const ret = {
+        app: path.resolve('./src/client/app.js') //'./src/client/app.js'
+    };
     arr.forEach(function(path) {
         let key = path.replace(/^.*pages\/([a-zA-Z0-9_-]+)\/main\.js$/, '$1');
         if (key) {
@@ -47,11 +51,11 @@ function getEntries() {
 }
 
 webpackConfig.entry = getEntries();
-webpackConfig.entry.vendor = Object.keys(pkg.dependencies);
+webpackConfig.entry['vendor'] = Object.keys(pkg.dependencies);
 webpackConfig.plugins = [
     new optimize.OccurrenceOrderPlugin(),
     // new webpack.NoErrorsPlugin(),
-    new optimize.CommonsChunkPlugin({ name: 'vendor' }),
+    new optimize.CommonsChunkPlugin('vendor', '[name].js', Infinity),
 ];
 console.log(webpackConfig);
 
@@ -82,7 +86,7 @@ gulp.task('main', ['clean'], () => {
 });
 
 gulp.task('watch', () => {
-    gulp.watch(paths.allSrcJs, ['main']);
+    gulp.watch(paths.allSrc, ['main']);
 });
 
 gulp.task('test', () => {

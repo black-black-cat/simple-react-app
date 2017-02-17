@@ -5,13 +5,17 @@ export default {
         path: '/dist',
         filename: '[name].js',
     },
-    devtool: '#eval',
+    devtool: 'eval',
     module: {
         loaders: [{
             test: /\.jsx?$/,
             loader: 'babel-loader',
             exclude: [/node_modules/],
-        }, ],
+        }, {
+            test: /\.s[ac]ss$/,
+            loader: 'style!css!sass-loader',
+            exclude: [/node_modules/],
+        }],
     },
     resolve: {
         root: path.resolve(__dirname),
