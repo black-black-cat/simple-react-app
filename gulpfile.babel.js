@@ -7,7 +7,7 @@ import path from 'path';
 // import { exec } from 'child_process';
 
 import webpack from 'webpack-stream';
-import { optimize } from 'webpack';
+import {optimize} from 'webpack';
 import webpackConfig from './webpack.config.babel';
 
 import pkg from './package.json';
@@ -40,7 +40,7 @@ function getEntries() {
     const ret = {
         app: path.resolve('./src/client/app.js') //'./src/client/app.js'
     };
-    arr.forEach(function(path) {
+    arr.forEach(function (path) {
         let key = path.replace(/^.*pages\/([a-zA-Z0-9_-]+)\/main\.js$/, '$1');
         if (key) {
             ret[key] = path;
@@ -51,13 +51,38 @@ function getEntries() {
 }
 
 webpackConfig.entry = getEntries();
-webpackConfig.entry['vendor'] = Object.keys(pkg.dependencies);
-webpackConfig.plugins = [
-    new optimize.OccurrenceOrderPlugin(),
-    // new webpack.NoErrorsPlugin(),
-    new optimize.CommonsChunkPlugin('vendor', '[name].js', Infinity),
-];
 console.log(webpackConfig);
+
+gulp.task('readyProd', () => {
+    delete webpackConfig.devtool;
+    webpackConfig.entry['vendor'] = Object.keys(pkg.dependencies);
+    // webpackConfig.output.chunkFilename = '[name].[chunkhash].min.js';
+    webpackConfig.plugins = [
+        new optimize.UglifyJsPlugin({
+            compress: {
+                warnings: false
+            }
+        }),
+        new optimize.OccurrenceOrderPlugin(),
+        // new webpack.NoErrorsPlugin(),
+        // 'vendor', '[name].js', Infinity
+        new optimize.CommonsChunkPlugin({
+            name: 'vendor',
+            filename: '[name].[chunkHash].js',
+            minChunks: function(module, count) {
+                // any required modules inside node_modules are extracted to vendor
+                return (
+                    module.resource
+                    && /\.js$/.test(module.resource)
+                    && module.resource.indexOf(path.join(__dirname, './node_modules')) === 0
+                )
+            },
+            // chunks: ['vendor']
+            // chunks: Object.keys(webpackConfig.entry)
+        })
+    ];
+    console.log(webpackConfig);
+});
 
 gulp.task('clean', () => {
     return del([
@@ -95,3 +120,5 @@ gulp.task('test', () => {
 });
 
 gulp.task('default', ['watch', 'main']);
+
+gulp.task('prod', ['main', 'readyProd']);

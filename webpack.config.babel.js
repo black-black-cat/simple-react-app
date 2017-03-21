@@ -13,10 +13,11 @@ export default {
             exclude: [/node_modules/],
         }, {
             test: /\.s[ac]ss$/,
-            loader: 'style!css!sass-loader',
+            loader: 'style!css!postcss-loader!sass-loader',
             exclude: [/node_modules/],
         }],
     },
+
     resolve: {
         root: path.resolve(__dirname),
         extensions: ['', '.js', '.jsx'],

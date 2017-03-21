@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import ace from './src/client/vendor/ace';
-import './src/client/vendor/mode-markdown'
+import ace from 'src/client/vendor/ace';
+import 'src/client/vendor/mode-markdown'
 import marked from 'marked';
 
 class Editor extends Component {

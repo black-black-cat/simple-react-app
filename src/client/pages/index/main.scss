@@ -5,3 +5,25 @@ html {
 html * {
     box-sizing: inherit;
 }
+
+html, body {
+    min-height: 100vh;
+    background-color: #264c66;
+}
+
+.page-list {
+    li {
+        display: inline-block;
+        background-color: #fff;
+        border-radius: 4px;
+        padding: 4px 6px;
+        transform: translate(50%, 100%);
+        a {
+            color: lighten(green, 50%);
+
+            &:last-of-type {
+                color: lighten(red, 30%);
+            }
+        }
+    }
+}
