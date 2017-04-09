@@ -1,3 +1,5 @@
+@charset "UTF-8";
+
 html {
     box-sizing: border-box;
 }
@@ -9,6 +11,7 @@ html * {
 html, body {
     min-height: 100vh;
     background-color: #264c66;
+    font-family: "simhei", sans-serif;
 }
 
 a {

@@ -10,7 +10,8 @@
   "scripts": {
     "start": "gulp",
     "test": "gulp test",
-    "dev": "webpack --config ./config/webpack.base.js -w"
+    "dev": "webpack --config ./config/webpack.base.js --progress --color --watch",
+    "serve": "node config/webpack.dev.server.js"
   },
   "keywords": [],
   "author": "",
@@ -29,21 +30,26 @@
   "devDependencies": {
     "autoprefixer": "^6.7.7",
     "babel-loader": "^6.2.10",
+    "babel-plugin-transform-runtime": "^6.0.0",
     "babel-polyfill": "^6.22.0",
+    "babel-preset-env": "^1.3.3",
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-react": "^6.22.0",
     "babel-preset-stage-0": "^6.24.1",
-    "babel-runtime": "^6.0.0",
-    "babel-plugin-transform-runtime": "^6.0.0",
     "babel-register": "^6.0.0",
+    "babel-runtime": "^6.0.0",
     "chai": "^3.5.0",
+    "clean-webpack-plugin": "^0.1.16",
     "css-loader": "^0.26.1",
     "del": "^2.2.2",
+    "express": "^4.15.2",
+    "favicons-webpack-plugin": "^0.0.7",
     "glob": "^7.1.1",
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
     "gulp-mocha": "^3.0.1",
     "gulp-uncss": "^1.0.6",
+    "html-webpack-plugin": "^1.5.0",
     "mocha": "^3.2.0",
     "node-sass": "^4.4.0",
     "postcss-loader": "^1.3.3",
@@ -52,6 +58,8 @@
     "sinon-chai": "^2.8.0",
     "style-loader": "^0.13.1",
     "webpack": "^1.13.0",
+    "webpack-dev-middleware": "^1.10.1",
+    "webpack-dev-server": "^1.4.2",
     "webpack-stream": "^3.2.0"
   },
   "babel": {
@@ -60,6 +68,8 @@
       "stage-0",
       "react"
     ],
-    "plugins": ["transform-runtime"]
+    "plugins": [
+      "transform-runtime"
+    ]
   }
 }

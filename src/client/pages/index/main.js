@@ -16,12 +16,13 @@ let map = Object.keys(pages).map(function(item) {
 
 class NotesList extends Component {
     static propTypes = {
-        one: React.PropTypes.string.isRequired,
+        one: React.PropTypes.string.isRequired
     };
 
     render() {
         return (
             <ol>
+                <li>{ this.props.one }</li>
                 {
                     React.Children.map(this.props.children, (child) => {
                         return <li>{ child } </li>;
@@ -41,13 +42,11 @@ ReactDOM.render(
         <ul className="page-list">
             {map}
         </ul>
-        <NotesList one={'now'}>
-            <span>aaa</span>
-            <span>bbb</span>
-            <span>ccc</span>
-            <span>ddd</span>
-            <a href="#">81</a>
-            <a href="#">456</a>
+        <NotesList one={'' + new Date()}>
+            <span>hello world</span>
+            <span>see you again</span>
+            <span>say you say me</span>
+            <span>one year one day</span>
         </NotesList>
     </div>
     , document.querySelector('.app')

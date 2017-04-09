@@ -1,38 +1,45 @@
 let path = require('path');
 let glob = require('glob');
+let CleanWebpackPlugin = require('clean-webpack-plugin');
+let HtmlWebpackPlugin = require('html-webpack-plugin');
+let htmlPlugin;
 
 const paths = {
-    allSrc: 'src/**/*.{js,jsx,scss,sass}',
-    allSrcJs: 'src/**/*.js?(x)',
-    allSrcStyles: 'src/**/*.?(s)css',
-    serverSrcJs: 'src/server/**/*.js?(x)',
-    sharedSrcJs: 'src/shared/**/*.js?(x)',
-    testJs: 'src/test/**/*.js',
     clientEntryPoint: 'src/client/app.js', // webpack 单入口
-    clientEntryPoints: getEntryPaths(), // webpack 多入口
-    clientBundle: 'dist/client-bundle.js?(.map)',
-    gulpFile: 'gulpfile.babel.js',
-    webpackFile: 'webpack.config.babel.js',
-    libDir: 'lib',
-    distDir: 'dist',
-    testDir: 'src/test'
+    clientEntryPoints: getEntryPaths() // webpack 多入口
 };
 
 function getEntryPaths() {
-    return glob.sync('/**/main.js', {
-        root: path.resolve('./src/client/pages'),
+    return glob.sync('./src/client/pages/index/**/main.js', {
+        // cwd: process.cwd() // default 使用 npm scripts 时，是package.json所在目录
+        // root: path.resolve(options.cwd, "/") // default
     });
 }
 
 function getEntries() {
+    let nodePath = path;
     const arr = paths.clientEntryPoints;
+    console.log(arr);
     const ret = {
+        server: 'webpack-dev-server/client?http://localhost:8080/',
         app: path.resolve('./src/client/app.js') //'./src/client/app.js'
     };
     arr.forEach(function (path) {
-        let key = path.replace(/^.*pages\/([a-zA-Z0-9_-]+)\/main\.js$/, '$1');
+        let key = path.replace(/^.*pages\/([a-zA-Z0-9_\-\/]+)\/main\.js$/, '$1');
         if (key) {
             ret[key] = path;
+
+            // 每个页面生成一个html
+            htmlPlugin = new HtmlWebpackPlugin({
+                // 生成出来的html文件名
+                filename: key + '.html',
+                // 每个html的模版，这里多个页面使用同一个模版
+                template: nodePath.resolve(__dirname, '../index.html'),
+                // 自动将引用插入html
+                inject: true,
+                // 每个html引用的js模块，也可以在这里加上vendor等公用模块
+                chunks: [key]
+            });
         }
     });
     console.log(ret);
@@ -44,18 +51,19 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, '../dist'),
         filename: '[name].js',
+        publicPath: '/'
     },
     devtool: '#inline-source-map', // easy to breakpoint
     module: {
         loaders: [{
             test: /\.jsx?$/,
             loader: 'babel-loader',
-            exclude: [/node_modules/],
+            exclude: [/node_modules/]
         }, {
             test: /\.s[ac]ss$/,
             loader: 'style!css!postcss-loader!sass-loader',
-            exclude: [/node_modules/],
-        }],
+            exclude: [/node_modules/]
+        }]
     },
 
     resolve: {
@@ -65,12 +73,27 @@ module.exports = {
             components: path.resolve(__dirname, '../src/client/components'),
             containers: path.resolve(__dirname, '../src/client/containers'),
             actions: path.resolve(__dirname, '../src/client/actions'),
-            reducers: path.resolve(__dirname, '../src/client/reducers'),
+            reducers: path.resolve(__dirname, '../src/client/reducers')
         }
     },
-    // plugins: [
-    //     new webpack.optimize.OccurrenceOrderPlugin(),
-    //     new webpack.NoErrorsPlugin(),
-    //     new webpack.optimize.CommonsChunkPlugin({name: 'vendor'}),
-    // ]
-}
+
+    plugins: [
+        new CleanWebpackPlugin(['dist'], {
+            root: process.cwd(),
+            verbose: true,
+            dry: false,
+            exclude: ['shared.js']
+        }),
+        htmlPlugin
+        // new webpack.optimize.OccurrenceOrderPlugin(),
+        // new webpack.NoErrorsPlugin(),
+        // new webpack.optimize.CommonsChunkPlugin({name: 'vendor'}),
+    ],
+
+    devServer: {
+        inline: true,
+        contentBase: path.join(__dirname, "../dist"),
+        compress: true,
+        port: 9000
+    }
+};
