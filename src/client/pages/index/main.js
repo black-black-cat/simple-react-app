@@ -6,8 +6,8 @@ import ReactDOM from 'react-dom';
 require('./main.scss');
 
 let pages = {
-    dog: '/views/dog.html',
-    presentation: '/views/presentation.html'
+    dog: '/dog',
+    presentation: '/reveal'
 };
 
 let map = Object.keys(pages).map(function(item) {

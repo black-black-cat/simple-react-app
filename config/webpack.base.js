@@ -2,7 +2,7 @@ let path = require('path');
 let glob = require('glob');
 let CleanWebpackPlugin = require('clean-webpack-plugin');
 let HtmlWebpackPlugin = require('html-webpack-plugin');
-let htmlPlugin;
+let htmlPlugins = [];
 
 const paths = {
     clientEntryPoint: 'src/client/app.js', // webpack 单入口
@@ -10,7 +10,7 @@ const paths = {
 };
 
 function getEntryPaths() {
-    return glob.sync('./src/client/pages/index/**/main.js', {
+    return glob.sync('./src/client/pages/**/main.js', {
         // cwd: process.cwd() // default 使用 npm scripts 时，是package.json所在目录
         // root: path.resolve(options.cwd, "/") // default
     });
@@ -21,7 +21,6 @@ function getEntries() {
     const arr = paths.clientEntryPoints;
     console.log(arr);
     const ret = {
-        server: 'webpack-dev-server/client?http://localhost:8080/',
         app: path.resolve('./src/client/app.js') //'./src/client/app.js'
     };
     arr.forEach(function (path) {
@@ -30,7 +29,7 @@ function getEntries() {
             ret[key] = path;
 
             // 每个页面生成一个html
-            htmlPlugin = new HtmlWebpackPlugin({
+            var plugin = new HtmlWebpackPlugin({
                 // 生成出来的html文件名
                 filename: key + '.html',
                 // 每个html的模版，这里多个页面使用同一个模版
@@ -40,6 +39,7 @@ function getEntries() {
                 // 每个html引用的js模块，也可以在这里加上vendor等公用模块
                 chunks: [key]
             });
+            htmlPlugins.push(plugin);
         }
     });
     console.log(ret);
@@ -83,12 +83,11 @@ module.exports = {
             verbose: true,
             dry: false,
             exclude: ['shared.js']
-        }),
-        htmlPlugin
+        })
         // new webpack.optimize.OccurrenceOrderPlugin(),
         // new webpack.NoErrorsPlugin(),
         // new webpack.optimize.CommonsChunkPlugin({name: 'vendor'}),
-    ],
+    ].concat(htmlPlugins),
 
     devServer: {
         inline: true,
