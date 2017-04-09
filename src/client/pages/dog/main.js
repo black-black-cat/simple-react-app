@@ -3,9 +3,9 @@ import ReactDOM from 'react-dom';
 import { createStore } from 'redux';
 import { combineReducers } from 'redux'; // -immutable
 import { Provider } from 'react-redux';
-import dogReducer from 'src/client/reducers/dog-reducer';
-import BarkMessage from 'src/client/containers/bark-message';
-import BarkButton from 'src/client/containers/bark-button';
+import dogReducer from 'reducers/dog-reducer';
+import BarkMessage from 'containers/bark-message';
+import BarkButton from 'containers/bark-button';
 
 const store = createStore(combineReducers({
     dog: dogReducer,
