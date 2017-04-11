@@ -63,6 +63,9 @@ module.exports = {
             test: /\.s[ac]ss$/,
             loader: 'style!css!postcss-loader!sass-loader',
             exclude: [/node_modules/]
+        }, {
+            test: /\.(png|jpe?g|gif)/,
+            loader: 'url-loader?limit=0&name=images/[hash:9].[name].[ext]?v=[hash:6]'
         }]
     },
 
