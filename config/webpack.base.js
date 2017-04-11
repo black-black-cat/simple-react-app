@@ -37,7 +37,8 @@ function getEntries() {
                 // 自动将引用插入html
                 inject: true,
                 // 每个html引用的js模块，也可以在这里加上vendor等公用模块
-                chunks: [key]
+                chunks: [key],
+                favicon: 'favicon.ico'
             });
             htmlPlugins.push(plugin);
         }
