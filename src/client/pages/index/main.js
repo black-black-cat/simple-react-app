@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
+import PropTypes from 'prop-types';
 // import { createStore } from 'redux';
 // import { combineReducers } from 'redux'; // -immutable
 // import { Provider } from 'react-redux';
@@ -16,7 +17,7 @@ let map = Object.keys(pages).map(function(item) {
 
 class NotesList extends Component {
     static propTypes = {
-        one: React.PropTypes.string.isRequired
+        one: PropTypes.string.isRequired
     };
 
     render() {
