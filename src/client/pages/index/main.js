@@ -7,8 +7,8 @@ import PropTypes from 'prop-types';
 require('./main.scss');
 
 let pages = {
-    dog: '/dog',
-    presentation: '/reveal'
+    dog: '/dog.html',
+    presentation: '/reveal.html'
 };
 
 let map = Object.keys(pages).map(function(item) {

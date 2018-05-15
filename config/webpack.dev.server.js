@@ -41,7 +41,8 @@ app.get('/:viewname?', function(req, res, next) {
     });
 });
 
-let port = 5566
+let port = 5567
+console.log(app.listen)
 module.exports = app.listen(port, function(err) {
     if (err) {
         // do something

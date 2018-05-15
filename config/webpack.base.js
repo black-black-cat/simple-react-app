@@ -10,7 +10,8 @@ const paths = {
 };
 
 function getEntryPaths() {
-    return glob.sync('./src/client/pages/**/main.js', {
+    let dir = path.resolve(__dirname, '../src/client/pages/**/main.js')
+    return glob.sync(dir, {
         // cwd: process.cwd() // default 使用 npm scripts 时，是package.json所在目录
         // root: path.resolve(options.cwd, "/") // default
     });
@@ -82,12 +83,12 @@ module.exports = {
     },
 
     plugins: [
-        new CleanWebpackPlugin(['dist'], {
-            root: process.cwd(),
-            verbose: true,
-            dry: false,
-            exclude: ['shared.js']
-        })
+        // new CleanWebpackPlugin(['dist'], {
+        //     root: process.cwd(),
+        //     verbose: true,
+        //     dry: false,
+        //     exclude: ['shared.js']
+        // })
         // new webpack.optimize.OccurrenceOrderPlugin(),
         // new webpack.NoErrorsPlugin(),
         // new webpack.optimize.CommonsChunkPlugin({name: 'vendor'}),
@@ -97,6 +98,13 @@ module.exports = {
         inline: true,
         contentBase: path.join(__dirname, "../dist"),
         compress: true,
-        port: 9000
+        port: 9000,
+
+        contentBase: path.join(__dirname, "../"),
+        inline: true,
+        host: 'localhost',
+        port: 8009,
+        hot: true,
+        open: true
     }
 };
